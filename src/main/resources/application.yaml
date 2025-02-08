@@ -16,18 +16,26 @@ spring:
     hibernate:
       ddl-auto: update # create the tables if they don't exist automatically when the application starts
     show-sql: true # show the SQL queries in the console logs
+  config:
+    import: # register the files to import the properties from
+      - "application_qa.yaml"
+      - "application_prod.yaml"
+  profiles:
+    active: "qa" # set the active profile to a specific one
 springdoc:
   swagger-ui:
     path: /docs # the URL path to access the Swagger UI
 
+
+# ENV values for testing purposes and to show how to use profiles
 build:
-  version: "1.0"
+  version: "3.0"
 
 accounts:
-  message: "Welcome to the Accounts Microservice from EazyBank"
+  message: "Welcome to the Accounts Microservice (DEV profile) from EazyBank"
   contactDetails:
     name: "Gerardo Medellin"
     email: "thegera4@hotmail.com"
   onCallSupport:
-    -(555)555-1234
-    -(555)555-5678
+    - (555)555-1234
+    - (555)555-5678

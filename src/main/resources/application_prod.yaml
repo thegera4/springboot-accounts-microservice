@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to the Accounts Microservice (PROD profile) from EazyBank"
+  contactDetails:
+    name: "PROD manager"
+    email: "thegera4@hotmail.com"
+  onCallSupport:
+    - (777)777-1234
+    - (777)777-6678

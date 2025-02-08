@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "2.0"
+
+accounts:
+  message: "Welcome to the Accounts Microservice (QA profile) from EazyBank"
+  contactDetails:
+    name: "QA Lead"
+    email: "thegera4@hotmail.com"
+  onCallSupport:
+    - (666)666-1234
+    - (666)666-6678
