@@ -13,9 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +38,11 @@ public class AccountsController {
     this.iAccountsService = iAccountsService;
   }
 
-  @Value("${build.version}")   // Injecting an env variable from application.properties
+  @Value("${build.version}")   // Injecting an env variable from application.properties (Approach 1)
   private String buildVersion;
+
+  @Autowired // Injecting the environment object to get the active profile (Approach 2)
+  private Environment environment;
 
   @Operation(summary = "Create a new account", description = "Endpoint to create a new account / customer in EazyBank")
   @ApiResponses({
@@ -135,6 +138,20 @@ public class AccountsController {
   @GetMapping("/build-info")
   public ResponseEntity<String> getBuildInfo() {
     return ResponseEntity.status(HttpStatus.OK).body("Current Build Version: " + buildVersion);
+  }
+
+  @Operation(summary = "Get java version", description = "Endpoint to check the Java version installed.")
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+          @ApiResponse(
+                  responseCode = "500",
+                  description = AccountsConstants.MESSAGE_500,
+                  content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+          )
+  })
+  @GetMapping("/java-version")
+  public ResponseEntity<String> getJavaVersion() {
+    return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("JAVA_HOME"));
   }
 
 }
