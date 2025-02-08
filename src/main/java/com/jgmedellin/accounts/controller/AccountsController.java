@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,25 +28,26 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated // Perform validation on the request body
 public class AccountsController {
 
-  // No need to autowire here due to Lombok: @AllArgsConstructor annotation (constructor injection)
-  private IAccountsService iAccountsService;
+  private final IAccountsService iAccountsService;
 
-  @Operation(
-          summary = "Create a new account",
-          description = "This endpoint allows you to create a new account and customer in EazyBank"
-  )
+  @Autowired
+  public AccountsController(IAccountsService iAccountsService) {
+    this.iAccountsService = iAccountsService;
+  }
+
+  @Value("${build.version}")   // Injecting an env variable from application.properties
+  private String buildVersion;
+
+  @Operation(summary = "Create a new account", description = "Endpoint to create a new account / customer in EazyBank")
   @ApiResponses({
           @ApiResponse(responseCode = "201", description = "Account created successfully"),
           @ApiResponse(
                   responseCode = "500",
                   description = AccountsConstants.MESSAGE_500,
-                  content = @Content(
-                          schema = @Schema(implementation = ErrorResponseDto.class)
-                  )
+                  content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
           )
   })
   @PostMapping("/create")
@@ -61,9 +64,7 @@ public class AccountsController {
           @ApiResponse(
                   responseCode = "500",
                   description = AccountsConstants.MESSAGE_500,
-                  content = @Content(
-                          schema = @Schema(implementation = ErrorResponseDto.class)
-                  )
+                  content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
           )
   })
   @GetMapping("/fetch")
@@ -73,19 +74,14 @@ public class AccountsController {
     return ResponseEntity.status(HttpStatus.OK).body(customerDto);
   }
 
-  @Operation(
-          summary = "Update account details",
-          description = "This endpoint allows you to update account and customer details"
-  )
+  @Operation(summary = "Update account details", description = "Endpoint to update account and customer details.")
   @ApiResponses({
           @ApiResponse(responseCode = "200", description = AccountsConstants.MESSAGE_200),
           @ApiResponse(responseCode = "417", description = AccountsConstants.MESSAGE_417_UPDATE),
           @ApiResponse(
                   responseCode = "500",
                   description = AccountsConstants.MESSAGE_500,
-                  content = @Content(
-                          schema = @Schema(implementation = ErrorResponseDto.class)
-                  )
+                  content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
           )
   })
   @PutMapping("/update")
@@ -102,19 +98,14 @@ public class AccountsController {
     }
   }
 
-  @Operation(
-          summary = "Delete an account",
-          description = "This endpoint allows you to delete an account and customer by mobile number"
-  )
+  @Operation(summary = "Delete an account", description = "Endpoint to delete an account and customer by mobile number.")
   @ApiResponses({
           @ApiResponse(responseCode = "200", description = AccountsConstants.MESSAGE_200),
           @ApiResponse(responseCode = "417", description = AccountsConstants.MESSAGE_417_DELETE),
           @ApiResponse(
                   responseCode = "500",
                   description = AccountsConstants.MESSAGE_500,
-                  content = @Content(
-                          schema = @Schema(implementation = ErrorResponseDto.class)
-                  )
+                  content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
           )
   })
   @DeleteMapping("/delete")
@@ -130,6 +121,20 @@ public class AccountsController {
               .status(HttpStatus.EXPECTATION_FAILED)
               .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_DELETE));
     }
+  }
+
+  @Operation(summary = "Get build information account", description = "Endpoint to check the current API version")
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+          @ApiResponse(
+                  responseCode = "500",
+                  description = AccountsConstants.MESSAGE_500,
+                  content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+          )
+  })
+  @GetMapping("/build-info")
+  public ResponseEntity<String> getBuildInfo() {
+    return ResponseEntity.status(HttpStatus.OK).body("Current Build Version: " + buildVersion);
   }
 
 }
