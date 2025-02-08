@@ -22,3 +22,12 @@ springdoc:
 
 build:
   version: "1.0"
+
+accounts:
+  message: "Welcome to the Accounts Microservice from EazyBank"
+  contactDetails:
+    name: "Gerardo Medellin"
+    email: "thegera4@hotmail.com"
+  onCallSupport:
+    -(555)555-1234
+    -(555)555-5678

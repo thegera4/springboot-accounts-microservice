@@ -1,6 +1,7 @@
 package com.jgmedellin.accounts.controller;
 
 import com.jgmedellin.accounts.constants.AccountsConstants;
+import com.jgmedellin.accounts.dto.AccountsContactInfoDto;
 import com.jgmedellin.accounts.dto.CustomerDto;
 import com.jgmedellin.accounts.dto.ErrorResponseDto;
 import com.jgmedellin.accounts.dto.ResponseDto;
@@ -43,6 +44,9 @@ public class AccountsController {
 
   @Autowired // Injecting the environment object to get the active profile (Approach 2)
   private Environment environment;
+
+  @Autowired
+  private AccountsContactInfoDto accountsContactInfoDto; // Injecting the AccountsContactInfoDto bean (Approach 3)
 
   @Operation(summary = "Create a new account", description = "Endpoint to create a new account / customer in EazyBank")
   @ApiResponses({
@@ -152,6 +156,20 @@ public class AccountsController {
   @GetMapping("/java-version")
   public ResponseEntity<String> getJavaVersion() {
     return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("JAVA_HOME"));
+  }
+
+  @Operation(summary = "Get contact information", description = "Endpoint to check the contact information.")
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+          @ApiResponse(
+                  responseCode = "500",
+                  description = AccountsConstants.MESSAGE_500,
+                  content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+          )
+  })
+  @GetMapping("/contact-info")
+  public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+    return ResponseEntity.status(HttpStatus.OK).body(accountsContactInfoDto);
   }
 
 }
