@@ -21,7 +21,7 @@ spring:
       - "application_qa.yaml"
       - "application_prod.yaml"
   profiles:
-    active: "qa" # set the active profile to a specific one
+    active: "qa" # set the active profile to a specific one, here you need to externalize the values with an 'approach'
 springdoc:
   swagger-ui:
     path: /docs # the URL path to access the Swagger UI
